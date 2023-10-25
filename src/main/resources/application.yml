@@ -52,9 +52,9 @@ spring:
       # 热部署开关
       enabled: true
   datasource:
-    url: jdbc:mysql://123.60.171.78:3306/quartz?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://***:3306/quartz?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
     username: root
-    password: SHA13@ht
+    password: ***
 
 # MyBatis
 mybatis:
