@@ -12,6 +12,10 @@ import com.haotao.quartz.domain.SysJob;
 import com.haotao.quartz.service.ISysJobService;
 import com.haotao.quartz.utils.CronUtils;
 import com.haotao.quartz.utils.ScheduleUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,6 +32,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/monitor/job")
+@Api(tags = "SysJobController", description = "定时任务Api")
 public class SysJobController extends BaseController
 {
     private String prefix = "monitor/job";
@@ -41,6 +46,23 @@ public class SysJobController extends BaseController
         return prefix + "/job";
     }
 
+    @ApiOperation("定时任务list方法")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "jobId", value = "任务序号", required = false, paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "jobGroup", value = "任务组名", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "invokeTarget", value = "调用目标字符串", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "cronExpression", value = "cron执行表达式", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "misfirePolicy", value = "cron计划策略 （0默认 1立即触发 2触发一次执行 3不触发）", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "concurrent", value = "是否并发执行（0允许 1禁止）", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "status", value = "任务状态（0正常 1暂停）", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "searchValue", value = "搜索值", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createBy", value = "创建者", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createTime", value = "创建时间", required = false, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "updateBy", value = "更新者", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "updateTime", value = "更新时间", required = false, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "remark", value = "备注", required = false, paramType = "query", dataType = "String")
+    })
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(SysJob job)
@@ -50,6 +72,23 @@ public class SysJobController extends BaseController
         return getDataTable(list);
     }
 
+    @ApiOperation("定时任务导出Excel方法")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "jobId", value = "任务序号", required = true, paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "jobGroup", value = "任务组名", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "invokeTarget", value = "调用目标字符串", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "cronExpression", value = "cron执行表达式", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "misfirePolicy", value = "cron计划策略 （0默认 1立即触发 2触发一次执行 3不触发）", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "concurrent", value = "是否并发执行（0允许 1禁止）", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "status", value = "任务状态（0正常 1暂停）", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "searchValue", value = "搜索值", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createBy", value = "创建者", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createTime", value = "创建时间", required = false, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "updateBy", value = "更新者", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "updateTime", value = "更新时间", required = false, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "remark", value = "备注", required = false, paramType = "query", dataType = "String")
+    })
     @Log(title = "定时任务", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
@@ -60,6 +99,7 @@ public class SysJobController extends BaseController
         return util.exportExcel(list, "定时任务");
     }
 
+    @ApiOperation("定时任务删除方法")
     @Log(title = "定时任务", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
@@ -69,6 +109,7 @@ public class SysJobController extends BaseController
         return success();
     }
 
+    @ApiOperation("定时任务查看详细信息方法")
     @GetMapping("/detail/{jobId}")
     public String detail(@PathVariable("jobId") Long jobId, ModelMap mmap)
     {
@@ -80,6 +121,23 @@ public class SysJobController extends BaseController
     /**
      * 任务调度状态修改
      */
+    @ApiOperation("定时任务修改状态方法")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "jobId", value = "任务序号", required = true, paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "jobGroup", value = "任务组名", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "invokeTarget", value = "调用目标字符串", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "cronExpression", value = "cron执行表达式", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "misfirePolicy", value = "cron计划策略 （0默认 1立即触发 2触发一次执行 3不触发）", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "concurrent", value = "是否并发执行（0允许 1禁止）", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "status", value = "任务状态（0正常 1暂停）", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "searchValue", value = "搜索值", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createBy", value = "创建者", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createTime", value = "创建时间", required = false, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "updateBy", value = "更新者", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "updateTime", value = "更新时间", required = false, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "remark", value = "备注", required = false, paramType = "query", dataType = "String")
+    })
     @Log(title = "定时任务", businessType = BusinessType.UPDATE)
     @PostMapping("/changeStatus")
     @ResponseBody
@@ -93,6 +151,23 @@ public class SysJobController extends BaseController
     /**
      * 任务调度立即执行一次
      */
+    @ApiOperation("任务调度立即执行一次")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "jobId", value = "任务序号", required = true, paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "jobGroup", value = "任务组名", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "invokeTarget", value = "调用目标字符串", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "cronExpression", value = "cron执行表达式", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "misfirePolicy", value = "cron计划策略 （0默认 1立即触发 2触发一次执行 3不触发）", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "concurrent", value = "是否并发执行（0允许 1禁止）", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "status", value = "任务状态（0正常 1暂停）", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "searchValue", value = "搜索值", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createBy", value = "创建者", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createTime", value = "创建时间", required = false, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "updateBy", value = "更新者", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "updateTime", value = "更新时间", required = false, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "remark", value = "备注", required = false, paramType = "query", dataType = "String")
+    })
     @Log(title = "定时任务", businessType = BusinessType.UPDATE)
     @PostMapping("/run")
     @ResponseBody
@@ -114,6 +189,23 @@ public class SysJobController extends BaseController
     /**
      * 新增保存调度
      */
+    @ApiOperation("保存新增调度任务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "jobId", value = "任务序号", required = true, paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "jobName", value = "任务名称", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "jobGroup", value = "任务组名", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "invokeTarget", value = "调用目标字符串", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "cronExpression", value = "cron执行表达式", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "misfirePolicy", value = "cron计划策略 （0默认 1立即触发 2触发一次执行 3不触发）", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "concurrent", value = "是否并发执行（0允许 1禁止）", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "status", value = "任务状态（0正常 1暂停）", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "searchValue", value = "搜索值", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createBy", value = "创建者", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createTime", value = "创建时间", required = true, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "updateBy", value = "更新者", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "updateTime", value = "更新时间", required = true, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "remark", value = "备注", required = true, paramType = "query", dataType = "String")
+    })
     @Log(title = "定时任务", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
@@ -160,6 +252,23 @@ public class SysJobController extends BaseController
     /**
      * 修改保存调度
      */
+    @ApiOperation("保存修改调度任务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "jobId", value = "任务序号", required = true, paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "jobName", value = "任务名称", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "jobGroup", value = "任务组名", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "invokeTarget", value = "调用目标字符串", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "cronExpression", value = "cron执行表达式", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "misfirePolicy", value = "cron计划策略 （0默认 1立即触发 2触发一次执行 3不触发）", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "concurrent", value = "是否并发执行（0允许 1禁止）", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "status", value = "任务状态（0正常 1暂停）", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "searchValue", value = "搜索值", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createBy", value = "创建者", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createTime", value = "创建时间", required = true, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "updateBy", value = "更新者", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "updateTime", value = "更新时间", required = true, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "remark", value = "备注", required = true, paramType = "query", dataType = "String")
+    })
     @Log(title = "定时任务", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
@@ -195,6 +304,23 @@ public class SysJobController extends BaseController
     /**
      * 校验cron表达式是否有效
      */
+    @ApiOperation("校验cron表达式是否有效")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "jobId", value = "任务序号", required = false, paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "jobGroup", value = "任务组名", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "invokeTarget", value = "调用目标字符串", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "cronExpression", value = "cron执行表达式", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "misfirePolicy", value = "cron计划策略 （0默认 1立即触发 2触发一次执行 3不触发）", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "concurrent", value = "是否并发执行（0允许 1禁止）", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "status", value = "任务状态（0正常 1暂停）", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "searchValue", value = "搜索值", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createBy", value = "创建者", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "createTime", value = "创建时间", required = false, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "updateBy", value = "更新者", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "updateTime", value = "更新时间", required = false, paramType = "query", dataType = "date-time"),
+            @ApiImplicitParam(name = "remark", value = "备注", required = false, paramType = "query", dataType = "String")
+    })
     @PostMapping("/checkCronExpressionIsValid")
     @ResponseBody
     public boolean checkCronExpressionIsValid(SysJob job)
@@ -205,6 +331,7 @@ public class SysJobController extends BaseController
     /**
      * Cron表达式在线生成
      */
+    @ApiOperation("Cron表达式在线生成")
     @GetMapping("/cron")
     public String cron()
     {
@@ -214,6 +341,7 @@ public class SysJobController extends BaseController
     /**
      * 查询cron表达式近5次的执行时间
      */
+    @ApiOperation("查询cron表达式近5次的执行时间")
     @GetMapping("/queryCronExpression")
     @ResponseBody
     public AjaxResult queryCronExpression(@RequestParam(value = "cronExpression", required = false) String cronExpression)
